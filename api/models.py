@@ -7,7 +7,10 @@ class User(AbstractUser):
         USER = 'user', 'User'
         MODERATOR = 'moderator', 'Moderator'
         ADMIN = 'admin', 'Admin'
-    description = models.TextField(blank=True)
+
+    description = models.TextField(
+        blank=True,
+    )
     role = models.CharField(
         choices=Roles.choices,
         default=Roles.USER,
@@ -18,7 +21,6 @@ class Titles(models.Model):
     title = models.CharField('Name', max_length=200, help_text='Введи название')
     # category = models.ForeignKey(Catigories, on_delete=models.CASCADE, related_name='категория')
     year = models.SmallIntegerField('Year', help_text='Год выхода', null=True)
-
 
     class Meta:
         verbose_name_plural = 'Titles'
