@@ -1,8 +1,18 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
+class User(AbstractUser):
+    class Roles(models.TextChoices):
+        USER = 'user', 'User'
+        MODERATOR = 'moderator', 'Moderator'
+        ADMIN = 'admin', 'Admin'
+    description = models.TextField(blank=True)
+    role = models.CharField(
+        choices=Roles.choices,
+        default=Roles.USER,
+    )
+
 
 class Titles(models.Model):
     title = models.CharField('Name', max_length=200, help_text='Введи название')
