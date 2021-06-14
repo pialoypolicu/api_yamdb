@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from api.models import Titles
+from api.models import Title
 
-admin.site.register(Titles)
+admin.site.register(Title)

@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
+
+from api.models import Title
+from api.serializers import TitleSerializer
+
 
 class TitlesViewSet(ModelViewSet):
-    pass
-
-
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
