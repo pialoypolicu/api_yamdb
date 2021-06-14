@@ -7,5 +7,5 @@ router_yamdb_v1 = DefaultRouter()
 router_yamdb_v1.register('titles', TitlesViewSet, basename='titles_view')
 
 urlpatterns = [
-    path('v1', include(router_yamdb_v1.urls))
+    path('v1/', include(router_yamdb_v1.urls))
 ]

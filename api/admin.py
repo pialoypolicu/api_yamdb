@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from api.models import Titles, User
+from api.models import Title, User
+
+admin.site.register(Title)
 
 
 @admin.register(User)
@@ -21,6 +23,3 @@ class UserAdmin(admin.ModelAdmin):
         'description',
     )
     empty_value_display = '-пусто-'
-
-
-admin.site.register(Titles)
