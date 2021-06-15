@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from api.models import Title, User
+
+from api.models import Title, User, Review
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,3 +23,9 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
+
+
+class ReviewSerilizer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Review

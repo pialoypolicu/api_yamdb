@@ -21,7 +21,7 @@ class User(AbstractUser):
 
 class Title(models.Model):
     name = models.CharField('Name', max_length=200, help_text='Введи название')
-    year = models.SmallIntegerField('Year', help_text='Год выхода', null=True)
+    year = models.PositiveSmallIntegerField('Year', help_text='Год выхода', null=True)
     description = models.TextField('Описание', null=True)
     # category = models.ForeignKey(Catigories, related_name='title')
     genre = models.CharField('Жанр', max_length=50, null=True)
@@ -34,3 +34,10 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Название'
         verbose_name_plural = 'Названия'
+
+class Review(models.Model):
+    title_id = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='review')
+    text = models.TextField('Текст отзыва', help_text='Введите текст')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    # score = models.PositiveSmallIntegerField('Оценка', help_text='Введите от 0 до 10', default=10)
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
