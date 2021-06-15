@@ -1,21 +1,15 @@
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.shortcuts import get_object_or_404
-from rest_framework import filters
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.pagination import PageNumberPagination
 
-from api.models import Title, Review
-from api.serializers import TitleSerializer, ReviewSerilizer
-from rest_framework import filters, status
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.pagination import PageNumberPagination
-
-from api.models import Title, User
+from api.models import Review, Title, User
 from api.permissions import IsAdmin
-from api.serializers import TitleSerializer, UserSerializer
+from api.serializers import ReviewSerilizer, TitleSerializer, UserSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -63,4 +57,8 @@ class ReviewViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs['id'])
-        serializer.save(author=self.request.user, title=title)
+        serializer.save(author=self.request.user, title_id=title)
+
+    def get_queryset(self):
+        title = get_object_or_404(Title, id=self.kwargs['id'])
+        return title.review.all()
