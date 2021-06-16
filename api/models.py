@@ -27,7 +27,6 @@ class Title(models.Model):
         null=True
     )
     description = models.TextField('Описание', null=True)
-    # category = models.ForeignKey(Catigories, related_name='title')
     genre = models.CharField('Жанр', max_length=50, null=True)
     category = models.IntegerField('Категория', null=True)
 
@@ -43,7 +42,7 @@ class Review(models.Model):
     title_id = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name='review'
+        related_name='reviews'
     )
     text = models.TextField('Текст отзыва', help_text='Введите текст')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -51,6 +50,9 @@ class Review(models.Model):
         'Оценка',
         help_text='Введите от 0 до 10',
         default=10,
-        validators=[MinValueValidator(0), MaxValueValidator(10)]
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
     )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    def __str__(self):
+        return self.text
