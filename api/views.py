@@ -61,4 +61,4 @@ class ReviewViewSet(ModelViewSet):
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs['id'])
-        return title.review.all()
+        return title.reviews.all()
