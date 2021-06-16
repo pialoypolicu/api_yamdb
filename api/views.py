@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Review, Title, User
-from api.permissions import IsAdmin
+from api.permissions import IsAdmin, IsAdminOrReadOnly
 from api.serializers import ReviewSerilizer, TitleSerializer, UserSerializer
 
 
@@ -45,6 +45,7 @@ class UserViewSet(ModelViewSet):
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category', 'year', 'name']  # 'genre'
     search_fields = ['name', ]
