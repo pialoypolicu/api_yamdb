@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from api.models import Title, User, Review
+from api.models import Title, Review
+from users.models import User
+
 
 class TitleAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'year')

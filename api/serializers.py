@@ -1,22 +1,7 @@
 from rest_framework import serializers
 
 
-from api.models import Title, User, Review
-
-
-class UserSerializer(serializers.ModelSerializer):
-    bio = serializers.CharField(source='description')
-
-    class Meta:
-        fields = (
-            'first_name',
-            'last_name',
-            'username',
-            'bio',
-            'email',
-            'role',
-        )
-        model = User
+from api.models import Title, Review
 
 
 class TitleSerializer(serializers.ModelSerializer):

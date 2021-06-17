@@ -7,9 +7,11 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import Review, Title, User
-from api.permissions import IsAdmin
-from api.serializers import ReviewSerilizer, TitleSerializer, UserSerializer
+from api.models import Review, Title
+from users.models import User
+from users.permissions import IsAdmin
+from api.serializers import ReviewSerilizer, TitleSerializer
+from users.serializers import UserSerializer
 
 
 class UserViewSet(ModelViewSet):
