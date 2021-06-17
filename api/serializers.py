@@ -1,7 +1,7 @@
 from django.db.models import Avg
 from rest_framework import serializers
 
-from api.models import Review, Title
+from api.models import Categories, Review, Title
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -27,3 +27,9 @@ class ReviewSerilizer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Categories
