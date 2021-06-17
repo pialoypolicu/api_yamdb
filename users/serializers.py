@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(source='description')
 
     class Meta:
+        model = User
         fields = (
             'first_name',
             'last_name',
@@ -24,4 +25,3 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'role',
         )
-        model = User

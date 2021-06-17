@@ -20,6 +20,7 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
     permission_classes = (IsAdmin, IsAdminUser)
+    lookup_field = 'username'
 
     @action(
         detail=False,
