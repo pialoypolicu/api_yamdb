@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Review, Title, User
-from api.permissions import IsAdmin, IsAdminOrReadOnly
+from api.permissions import IsAdmin, IsAdminOrReadOnly, IsOwnerOrReadOnly
 from api.serializers import ReviewSerilizer, TitleSerializer, UserSerializer
 
 
@@ -47,7 +47,7 @@ class TitleViewSet(ModelViewSet):
     serializer_class = TitleSerializer
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['category', 'year', 'name']  # 'genre'
+    filterset_fields = ['category', 'year']  # 'genre'
     search_fields = ['name', ]
     pagination_class = PageNumberPagination
 
@@ -55,6 +55,7 @@ class TitleViewSet(ModelViewSet):
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerilizer
+    permission_classes = [IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs['id'])

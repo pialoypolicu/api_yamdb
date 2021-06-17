@@ -39,6 +39,15 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerilizer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Review
+
+    def validate(self, data):
+        user = self.context['request'].user
+        review = self.context['view'].kwargs['id']
+        if Review.objects.filter(title_id_id=review).filter(author=user):
+            raise serializers.ValidationError('Вы уже оставили отзыв.')
+        return data
