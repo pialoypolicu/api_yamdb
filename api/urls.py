@@ -1,7 +1,7 @@
 from django.urls import include, re_path
 from rest_framework.routers import DefaultRouter
 
-from api.views import TitleViewSet, ReviewViewSet, UserViewSet
+from api.views import ReviewViewSet, TitleViewSet, UserViewSet
 from users.views import ObtainConfirmationCode, TokenObtainView
 
 router_yamdb_v1 = DefaultRouter()

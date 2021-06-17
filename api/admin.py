@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import Title, Review
+from api.models import Review, Title
 from users.models import User
 
 

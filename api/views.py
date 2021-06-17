@@ -8,9 +8,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Review, Title
+from api.serializers import ReviewSerilizer, TitleSerializer
 from users.models import User
 from users.permissions import IsAdmin
-from api.serializers import ReviewSerilizer, TitleSerializer
 from users.serializers import UserSerializer
 
 
