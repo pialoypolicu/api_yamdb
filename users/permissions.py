@@ -17,3 +17,8 @@ class IsAdmin(permissions.BasePermission):
 class IsModerator(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role == User.Roles.MODERATOR
+
+
+class UnauthorizedOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return not request.user.is_authenticated

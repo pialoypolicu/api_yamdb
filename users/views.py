@@ -5,11 +5,14 @@ from rest_framework.views import APIView
 
 from users import serializers
 from users.models import User
+from users.permissions import UnauthorizedOnly
 from users.utils import (get_confirmation_code, get_token_for_user,
                          get_username_from_email, send_confirmation_code)
 
 
 class TokenObtainView(APIView):
+    permission_classes = (UnauthorizedOnly,)
+
     def post(self, request, **kwargs):
         serializer = serializers.TokenObtainSerializer(data=request.data)
         if serializer.is_valid():
@@ -23,6 +26,8 @@ class TokenObtainView(APIView):
 
 
 class ObtainConfirmationCode(APIView):
+    permission_classes = (UnauthorizedOnly,)
+
     def post(self, request, **kwargs):
         serializer = serializers.EmailSerializer(
             data=request.data
