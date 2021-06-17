@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from users.models import User
-from users.permissions import IsAdmin, IsAdminOrReadOnly
+from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
 from users.serializers import UserSerializer
 
 from api.models import Categories, Review, Title, User
@@ -50,7 +50,7 @@ class UserViewSet(ModelViewSet):
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly, IsOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category', 'year']  # 'genre'
     search_fields = ['name', ]
@@ -60,7 +60,7 @@ class TitleViewSet(ModelViewSet):
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerilizer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = (IsModerator,)
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs['id'])

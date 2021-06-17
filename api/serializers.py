@@ -4,8 +4,15 @@ from rest_framework import serializers
 from api.models import Categories, Review, Title
 
 
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Categories
+
+
 class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
+    category = CategoriesSerializer()
 
     class Meta:
         model = Title
@@ -33,12 +40,8 @@ class ReviewSerilizer(serializers.ModelSerializer):
     def validate(self, data):
         user = self.context['request'].user
         review = self.context['view'].kwargs['id']
-        if Review.objects.filter(title_id_id=review).filter(author=user):
+        if self.context.get('request').method == 'POST' and (
+                Review.objects.filter(title_id_id=review).filter(author=user)
+        ):
             raise serializers.ValidationError('Вы уже оставили отзыв.')
         return data
-
-
-class CategoriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('name', 'slug')
-        model = Categories
