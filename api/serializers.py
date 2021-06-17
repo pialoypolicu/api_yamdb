@@ -1,22 +1,7 @@
 from django.db.models import Avg
 from rest_framework import serializers
 
-from api.models import Review, Title, User
-
-
-class UserSerializer(serializers.ModelSerializer):
-    bio = serializers.CharField(source='description')
-
-    class Meta:
-        fields = (
-            'first_name',
-            'last_name',
-            'username',
-            'bio',
-            'email',
-            'role',
-        )
-        model = User
+from api.models import Categories, Review, Title
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -51,3 +36,9 @@ class ReviewSerilizer(serializers.ModelSerializer):
         if Review.objects.filter(title_id_id=review).filter(author=user):
             raise serializers.ValidationError('Вы уже оставили отзыв.')
         return data
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Categories
