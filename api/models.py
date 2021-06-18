@@ -57,3 +57,14 @@ class Review(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class Comments(models.Model):
+    comment = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    text = models.TextField('Текс комметария', help_text='Введите текст')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)

@@ -1,7 +1,7 @@
 from django.db.models import Avg
 from rest_framework import serializers
 
-from api.models import Categories, Review, Title
+from api.models import Categories, Comments, Review, Title
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -45,3 +45,9 @@ class ReviewSerilizer(serializers.ModelSerializer):
         ):
             raise serializers.ValidationError('Вы уже оставили отзыв.')
         return data
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('id', 'text', 'author', 'pub_date')
+        model = Comments
