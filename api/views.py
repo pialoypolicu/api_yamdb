@@ -6,12 +6,14 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
+from api.viewsets import CreateListViewSet
 from users.models import User
 from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
 from users.serializers import UserSerializer
 
 from api.models import Categories, Comments, Review, Title, User
-from api.permissions import IsOwnerOrReadOnly
+from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner
 from api.serializers import (CategoriesSerializer, CommentsSerializer,
                              ReviewSerilizer, TitleSerializer)
 
@@ -48,17 +50,17 @@ class UserViewSet(ModelViewSet):
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['category', 'year']  # 'genre'
-    search_fields = ['name', ]
+    permission_classes = (IsAdmin | ReadOnly,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
+    filterset_fields = ('category', 'year')  # 'genre'
+    search_fields = ('name',)
     pagination_class = PageNumberPagination
 
 
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerilizer
-    permission_classes = (IsOwnerOrReadOnly, IsAdminOrReadOnly, IsModerator)
+    permission_classes = (IsAdminUser | IsAdmin | IsModerator | IsOwner | ReadOnly,)
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs['id'])
@@ -69,19 +71,13 @@ class ReviewViewSet(ModelViewSet):
         return title.reviews.all()
 
 
-class CreateListViewSet(mixins.CreateModelMixin,
-                        mixins.ListModelMixin,
-                        mixins.DestroyModelMixin,
-                        viewsets.GenericViewSet, ):
-    pass
-
-
 class CategoriesViewSet(CreateListViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name', ]
+    permission_classes = (IsAdminUser | IsAdmin | ReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class CommentsViewSet(ModelViewSet):
