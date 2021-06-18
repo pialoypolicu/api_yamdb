@@ -13,8 +13,6 @@ class EmailSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    bio = serializers.CharField(source='description')
-
     class Meta:
         model = User
         fields = (
@@ -25,3 +23,14 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'role',
         )
+
+    def update(self, user, validated_data):
+        request = self.context.get('request')
+        if request:
+            request_user = request.user
+            if (request_user.role != User.Roles.ADMIN or
+                    not request_user.is_superuser or
+                    not request_user.is_superuser):
+                validated_data.pop('role', None)
+        user = super().update(user, validated_data)
+        return user

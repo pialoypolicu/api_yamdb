@@ -23,7 +23,7 @@ class UserAdmin(admin.ModelAdmin):
         'username',
         'email',
         'role',
-        'description',
+        'bio',
         'first_name',
         'last_name',
     )
@@ -31,6 +31,6 @@ class UserAdmin(admin.ModelAdmin):
         'role',
     )
     search_fields = (
-        'description',
+        'bio',
     )
     empty_value_display = '-пусто-'

@@ -22,3 +22,11 @@ class IsModerator(permissions.BasePermission):
 class UnauthorizedOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return not request.user.is_authenticated
+
+
+class ReadOnlyAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return (request.method in permissions.SAFE_METHODS
+                and (request.user.role == User.Roles.ADMIN
+                     or request.user.is_superuser)
+                )
