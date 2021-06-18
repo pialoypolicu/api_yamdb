@@ -12,7 +12,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
-    category = CategoriesSerializer()
+    category = CategoriesSerializer(required=False)
 
     class Meta:
         model = Title
