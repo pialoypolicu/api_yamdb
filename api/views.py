@@ -20,7 +20,7 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
-    permission_classes = (IsAdmin, IsAdminUser)
+    permission_classes = (IsAdmin | IsAdminUser,)
     lookup_field = 'username'
 
     @action(
@@ -28,16 +28,14 @@ class UserViewSet(ModelViewSet):
         methods=['get'],
         permission_classes=(IsAuthenticated,)
     )
-    def me(self, request):
+    def me(self, request, **kwargs):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     @me.mapping.patch
-    def patch_me(self, request):
+    def patch_me(self, request, **kwargs):
         user = request.user
-        if user.role != User.Roles.ADMIN:
-            request.data.pop('role', None)
         serializer = self.serializer_class(
             user, data=request.data, partial=True
         )

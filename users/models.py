@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import \
     check_password as check_confirmation_code
 from django.contrib.auth.hashers import make_password as make_confirmation_code
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import UserManager as DefaultUserManager
 from django.contrib.auth.models import AnonymousUser as DjangoAnonymousUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -13,6 +14,13 @@ class AnonymousUser(DjangoAnonymousUser):  # noqa
     role = None
 
 
+class UserManager(DefaultUserManager):
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('role', 'admin')
+        extra_fields.setdefault('is_staff', True)
+        return super().create_superuser(username, email=None, password=None, **extra_fields)
+
+
 class User(AbstractUser):
     class Roles(models.TextChoices):
         USER = 'user', 'User'
@@ -20,8 +28,10 @@ class User(AbstractUser):
         ADMIN = 'admin', 'Admin'
 
     email = models.EmailField(_('email address'), unique=True)
-    description = models.TextField(
+    bio = models.TextField(
+        null=True,
         blank=True,
+        default='',
     )
     role = models.CharField(
         max_length=100,
@@ -32,6 +42,8 @@ class User(AbstractUser):
         _('confirmation_code'),
         max_length=128,
     )
+
+    objects = UserManager()
 
     _confirmation_code = None
 
@@ -55,11 +67,11 @@ class User(AbstractUser):
         )
 
     def __str__(self):
-        bio = wrap_text(self.description)
+        bio = wrap_text(self.bio)
         return (
             f'id: {self.id}\n'
-            f'username: {self.username}'
-            f'email: {self.email}'
-            f'role: {self.role}'
-            f'bio: {bio}'
+            f'username: {self.username}\n'
+            f'email: {self.email}\n'
+            f'role: {self.role}\n'
+            f'bio: {bio}\n'
         )

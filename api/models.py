@@ -31,12 +31,12 @@ class Title(models.Model):
         null=True
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Название'
         verbose_name_plural = 'Названия'
+
+    def __str__(self):
+        return self.name
 
 
 class Review(models.Model):
