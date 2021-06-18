@@ -3,11 +3,23 @@ from django.db import models
 from users.models import User
 
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.CharField(
         verbose_name='Наименование категории',
         max_length=200,
         help_text='Введите категорию'
+    )
+    slug = models.SlugField(unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Genre(models.Model):
+    name = models.CharField(
+        verbose_name='Наименование жанра',
+        max_length=200,
+        help_text='Введите жанр'
     )
     slug = models.SlugField(unique=True)
 
@@ -23,9 +35,9 @@ class Title(models.Model):
         null=True
     )
     description = models.TextField('Описание', null=True)
-    genre = models.CharField('Жанр', max_length=50, null=True)
+    genre = models.ManyToManyField(Genre, through='GenreTitle')
     category = models.ForeignKey(
-        Categories,
+        Category,
         on_delete=models.SET_NULL,
         blank=True,
         null=True
@@ -37,6 +49,14 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.genre} {self.title}'
 
 
 class Review(models.Model):
@@ -59,7 +79,7 @@ class Review(models.Model):
         return self.text
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     comment = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,

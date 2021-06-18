@@ -12,10 +12,10 @@ from users.models import User
 from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
 from users.serializers import UserSerializer
 
-from api.models import Categories, Comments, Review, Title, User
+from api.models import Review, Title, User, Category, Comment, Genre
 from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner
-from api.serializers import (CategoriesSerializer, CommentsSerializer,
-                             ReviewSerilizer, TitleSerializer)
+from api.serializers import (CommentsSerializer,
+                             ReviewSerializer, TitleSerializer, GenreSerializer, CategorySerializer)
 
 
 class UserViewSet(ModelViewSet):
@@ -59,7 +59,7 @@ class TitleViewSet(ModelViewSet):
 
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerilizer
+    serializer_class = ReviewSerializer
     permission_classes = (IsAdminUser | IsAdmin | IsModerator | IsOwner | ReadOnly,)
 
     def perform_create(self, serializer):
@@ -72,8 +72,17 @@ class ReviewViewSet(ModelViewSet):
 
 
 class CategoriesViewSet(CreateListViewSet):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminUser | IsAdmin | ReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class GenreViewSet(CreateListViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
     permission_classes = (IsAdminUser | IsAdmin | ReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -81,5 +90,5 @@ class CategoriesViewSet(CreateListViewSet):
 
 
 class CommentsViewSet(ModelViewSet):
-    queryset = Comments.objects.all()
+    queryset = Comment.objects.all()
     serializer_class = CommentsSerializer
