@@ -1,7 +1,9 @@
+import json
+
 from django.db.models import Avg
 from rest_framework import serializers
 
-from api.models import Review, Title, Genre, Category, Comment
+from api.models import Review, Title, Genre, Category, Comment, GenreTitle
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -35,6 +37,30 @@ class TitleSerializer(serializers.ModelSerializer):
 
     def get_rating(self, title):
         return title.reviews.aggregate(rating=Avg('score'))['rating']
+
+
+class TitleUnsafeSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        required=False,
+        queryset=Category.objects.all(),
+    )
+    genre = serializers.SlugRelatedField(
+        many=True,
+        required=False,
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+    )
+
+    class Meta:
+        model = Title
+        fields = (
+            'name',
+            'year',
+            'description',
+            'genre',
+            'category'
+        )
 
 
 class ReviewSerializer(serializers.ModelSerializer):
