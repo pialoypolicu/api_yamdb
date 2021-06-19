@@ -53,7 +53,7 @@ class TitleViewSet(ModelViewSet):
     serializer_class = TitleSerializer
     permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
-    filterset_fields = ('category', 'year')  # 'genre'
+    filterset_fields = ('category', 'year', 'genre')  # 'genre'
     search_fields = ('name',)
     pagination_class = PageNumberPagination
 
