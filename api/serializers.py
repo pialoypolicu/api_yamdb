@@ -64,7 +64,10 @@ class TitleUnsafeSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+    )
 
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
@@ -72,15 +75,20 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         user = self.context['request'].user
-        review = self.context['view'].kwargs['id']
+        review = self.context['view'].kwargs['title_id']
         if self.context.get('request').method == 'POST' and (
-                Review.objects.filter(title_id_id=review).filter(author=user)
+                Review.objects.filter(title_id=review).filter(author=user)
         ):
             raise serializers.ValidationError('Вы уже оставили отзыв.')
         return data
 
 
 class CommentsSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+    )
+
     class Meta:
         fields = ('id', 'text', 'author', 'pub_date')
         model = Comment

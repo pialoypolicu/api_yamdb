@@ -15,12 +15,12 @@ router_yamdb_v1.register(
     TitleViewSet,
     basename='titles')
 router_yamdb_v1.register(
-    r'titles/(?P<id>[^/.]+)/reviews',
+    r'titles/(?P<title_id>[^/.]+)/reviews',
     ReviewViewSet,
     basename='reviews'
 )
 router_yamdb_v1.register(
-    r'titles/(?P<id1>[^/.]+)/reviews/(?P<id2>[^/.]+)/comments',
+    r'titles/(?P<title_id>[^/.]+)/reviews/(?P<review_id>[^/.]+)/comments',
     CommentsViewSet,
     basename='comments'
 )
