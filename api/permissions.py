@@ -1,5 +1,7 @@
 from rest_framework import permissions
 
+from users.models import User
+
 
 class ReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -14,18 +16,10 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
 class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.author == request.user
+        return obj.author == request.user.username
 
 
-class MethodPermission(permissions.BasePermission):
+class ObjectPermissions(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method in ['PATCH', 'DELETE']:
-            role_status = request.user.role in ['moderator', 'admin']
-            return obj.author == request.user or role_status
-        elif request.method == 'POST':
-            return request.user.role == 'user'
-        elif request.method == 'GET':
-            return request.user.is_anonymous or (
-                request.user.role in ['user', 'moderator', 'admin'])
-        else:
-            return False
+        return (request.user.role in (User.Roles.MODERATOR, User.Roles.ADMIN) or
+                obj.author == request.user)

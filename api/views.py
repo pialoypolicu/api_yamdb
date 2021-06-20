@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -14,7 +14,7 @@ from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
 from users.serializers import UserSerializer
 
 from api.models import Review, Title, User, Category, Comment, Genre, GenreTitle
-from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner, MethodPermission
+from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner, MethodPermission, ObjectPermissions
 from api.serializers import (CommentsSerializer,
                              ReviewSerializer, TitleSerializer, GenreSerializer, CategorySerializer,
                              TitleUnsafeSerializer)
@@ -97,8 +97,18 @@ class TitleViewSet(ModelViewSet):
 
 class ReviewViewSet(ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-                          MethodPermission]
+    permissions = {
+        'create': (IsAuthenticated,),
+        'retrieve': (AllowAny,),
+        'update': (ObjectPermissions,),
+        'partial_update': (ObjectPermissions,),
+        'destroy': (ObjectPermissions,),
+        'list': (AllowAny,),
+    }
+
+    def get_permissions(self):
+        permission_classes = self.permissions[self.action]
+        return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs['id'])
@@ -130,3 +140,15 @@ class GenreViewSet(CreateListViewSet):
 class CommentsViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentsSerializer
+    permissions = {
+        'create': (IsAuthenticated,),
+        'retrieve': (AllowAny,),
+        'update': (ObjectPermissions,),
+        'partial_update': (ObjectPermissions,),
+        'destroy': (ObjectPermissions,),
+        'list': (AllowAny,),
+    }
+
+    def get_permissions(self):
+        permission_classes = self.permissions[self.action]
+        return [permission() for permission in permission_classes]
