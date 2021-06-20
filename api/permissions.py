@@ -19,7 +19,7 @@ class IsOwner(permissions.BasePermission):
         return obj.author == request.user.username
 
 
-class ObjectPermissions(permissions.BasePermission):
+class ObjectPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return (request.user.role in (User.Roles.MODERATOR, User.Roles.ADMIN) or
                 obj.author == request.user)

@@ -14,7 +14,7 @@ from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
 from users.serializers import UserSerializer
 
 from api.models import Review, Title, User, Category, Comment, Genre, GenreTitle
-from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner, MethodPermission, ObjectPermissions
+from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner, ObjectPermission
 from api.serializers import (CommentsSerializer,
                              ReviewSerializer, TitleSerializer, GenreSerializer, CategorySerializer,
                              TitleUnsafeSerializer)
@@ -100,9 +100,9 @@ class ReviewViewSet(ModelViewSet):
     permissions = {
         'create': (IsAuthenticated,),
         'retrieve': (AllowAny,),
-        'update': (ObjectPermissions,),
-        'partial_update': (ObjectPermissions,),
-        'destroy': (ObjectPermissions,),
+        'update': (ObjectPermission,),
+        'partial_update': (ObjectPermission,),
+        'destroy': (ObjectPermission,),
         'list': (AllowAny,),
     }
 
@@ -143,9 +143,9 @@ class CommentsViewSet(ModelViewSet):
     permissions = {
         'create': (IsAuthenticated,),
         'retrieve': (AllowAny,),
-        'update': (ObjectPermissions,),
-        'partial_update': (ObjectPermissions,),
-        'destroy': (ObjectPermissions,),
+        'update': (ObjectPermission,),
+        'partial_update': (ObjectPermission,),
+        'destroy': (ObjectPermission,),
         'list': (AllowAny,),
     }
 
