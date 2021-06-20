@@ -1,5 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from api.utils import wrap_text
 from users.models import User
 
 
@@ -48,7 +50,21 @@ class Title(models.Model):
         verbose_name_plural = 'Названия'
 
     def __str__(self):
-        return self.name
+        description = None
+        if self.description:
+            description = wrap_text(self.description)
+        genre = None
+        if self.genre:
+            genre = ''.join([title.name for title in self.genre.all()])
+        return (
+            f'id: {self.id}\n'
+            f'Name: {self.name}\n'
+            f'Year: {self.year}\n'
+            f'Description: {description}\n'
+            f'Category: {self.category}\n'
+            f'Genre: {genre}\n'
+            f'\n'
+        )
 
 
 class GenreTitle(models.Model):
