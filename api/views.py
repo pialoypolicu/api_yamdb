@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -13,7 +13,7 @@ from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
 from users.serializers import UserSerializer
 
 from api.models import Review, Title, User, Category, Comment, Genre, GenreTitle
-from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner
+from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner, MethodPermission
 from api.serializers import (CommentsSerializer,
                              ReviewSerializer, TitleSerializer, GenreSerializer, CategorySerializer,
                              TitleUnsafeSerializer)
@@ -91,9 +91,9 @@ class TitleViewSet(ModelViewSet):
 
 
 class ReviewViewSet(ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = (IsAdminUser | IsAdmin | IsModerator | IsOwner | ReadOnly,)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          MethodPermission]
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs['id'])
