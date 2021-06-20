@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthentic
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from api.filters import TitleFilter
 from api.viewsets import CreateListViewSet
 from users.models import User
 from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
@@ -52,9 +53,13 @@ class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAdmin | ReadOnly,)
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
-    filterset_fields = ('category', 'year', 'genre')
-    search_fields = ('name',)
+    filter_backends = (
+        filters.OrderingFilter,
+        DjangoFilterBackend,
+    )
+    ordering_fields = ('id',)
+    filterset_class = TitleFilter
+
     pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
