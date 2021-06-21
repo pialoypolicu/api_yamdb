@@ -1,9 +1,8 @@
-from django.contrib.auth.hashers import \
-    check_password as check_confirmation_code
+from django.contrib.auth.hashers import check_password as check_code
 from django.contrib.auth.hashers import make_password as make_confirmation_code
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import UserManager as DefaultUserManager
 from django.contrib.auth.models import AnonymousUser as DjangoAnonymousUser
+from django.contrib.auth.models import UserManager as DefaultUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -15,10 +14,21 @@ class AnonymousUser(DjangoAnonymousUser):  # noqa
 
 
 class UserManager(DefaultUserManager):
-    def create_superuser(self, username, email=None, password=None, **extra_fields):
+    def create_superuser(
+            self,
+            username,
+            email=None,
+            password=None,
+            **extra_fields
+    ):
         extra_fields.setdefault('role', 'admin')
         extra_fields.setdefault('is_staff', True)
-        return super().create_superuser(username, email, password, **extra_fields)
+        return super().create_superuser(
+            username,
+            email,
+            password,
+            **extra_fields
+        )
 
 
 class User(AbstractUser):
@@ -50,6 +60,9 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username',)
 
+    class Meta:
+        ordering = ['-id']
+
     def set_confirmation_code(self, raw_confirmation_code):
         self.confirmation_code = make_confirmation_code(raw_confirmation_code)
         self._confirmation_code = raw_confirmation_code
@@ -60,7 +73,7 @@ class User(AbstractUser):
             self._confirmation_code = None
             self.save(update_fields=['password'])
 
-        return check_confirmation_code(
+        return check_code(
             raw_confirmation_code,
             self.confirmation_code,
             setter
