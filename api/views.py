@@ -1,23 +1,20 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets, permissions
+from rest_framework import filters, permissions, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from api import serializers
 from api.filters import TitleFilter
+from api.models import Category, Comment, Genre, Review, Title
+from api.permissions import ObjectPatchDeletePermission, ReadOnly
 from api.viewsets import CreateListViewSet
 from users.models import User
-from users.permissions import IsAdmin, IsAdminOrReadOnly, IsModerator
+from users.permissions import IsAdmin
 from users.serializers import UserSerializer
-
-from api.models import Review, Title, User, Category, Comment, Genre, GenreTitle
-from api.permissions import IsOwnerOrReadOnly, ReadOnly, IsOwner, ObjectPermission
-from api.serializers import (CommentsSerializer,
-                             ReviewSerializer, TitleSerializer, GenreSerializer, CategorySerializer,
-                             TitleUnsafeSerializer)
 
 
 class UserViewSet(ModelViewSet):
@@ -51,29 +48,29 @@ class UserViewSet(ModelViewSet):
 
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-    permission_classes = (IsAdmin | ReadOnly,)
-    filter_backends = (
-        filters.OrderingFilter,
-        DjangoFilterBackend,
-    )
-    ordering_fields = ('id',)
+    serializer_class = serializers.TitleListRetrieveSerializer
+    permission_classes = (IsAdmin | IsAdminUser | ReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 
     pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
-            return TitleSerializer
-        return TitleUnsafeSerializer
+            return serializers.TitleListRetrieveSerializer
+        return serializers.TitlePostPatchSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         obj = self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        safe_serializer = TitleSerializer(obj)
-        return Response(safe_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        safe_serializer = serializers.TitleListRetrieveSerializer(obj)
+        return Response(
+            safe_serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
     def perform_create(self, serializer):
         return serializer.save()
@@ -81,14 +78,18 @@ class TitleViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=partial,
+        )
         serializer.is_valid(raise_exception=True)
         obj = self.perform_update(serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
 
-        safe_serializer = TitleSerializer(obj)
+        safe_serializer = serializers.TitleListRetrieveSerializer(obj)
         return Response(safe_serializer.data)
 
     def perform_update(self, serializer):
@@ -96,13 +97,13 @@ class TitleViewSet(ModelViewSet):
 
 
 class ReviewViewSet(ModelViewSet):
-    serializer_class = ReviewSerializer
+    serializer_class = serializers.ReviewSerializer
     permissions = {
         'create': (IsAuthenticated,),
         'retrieve': (AllowAny,),
-        'update': (ObjectPermission,),
-        'partial_update': (ObjectPermission,),
-        'destroy': (ObjectPermission,),
+        'update': (ObjectPatchDeletePermission,),
+        'partial_update': (ObjectPatchDeletePermission,),
+        'destroy': (ObjectPatchDeletePermission,),
         'list': (AllowAny,),
     }
 
@@ -121,7 +122,7 @@ class ReviewViewSet(ModelViewSet):
 
 class CategoriesViewSet(CreateListViewSet):
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = serializers.CategorySerializer
     permission_classes = (IsAdminUser | IsAdmin | ReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -130,7 +131,7 @@ class CategoriesViewSet(CreateListViewSet):
 
 class GenreViewSet(CreateListViewSet):
     queryset = Genre.objects.all()
-    serializer_class = GenreSerializer
+    serializer_class = serializers.GenreSerializer
     permission_classes = (IsAdminUser | IsAdmin | ReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -139,13 +140,13 @@ class GenreViewSet(CreateListViewSet):
 
 class CommentsViewSet(ModelViewSet):
     queryset = Comment.objects.all()
-    serializer_class = CommentsSerializer
+    serializer_class = serializers.CommentsSerializer
     permissions = {
         'create': (IsAuthenticated,),
         'retrieve': (AllowAny,),
-        'update': (ObjectPermission,),
-        'partial_update': (ObjectPermission,),
-        'destroy': (ObjectPermission,),
+        'update': (ObjectPatchDeletePermission,),
+        'partial_update': (ObjectPatchDeletePermission,),
+        'destroy': (ObjectPatchDeletePermission,),
         'list': (AllowAny,),
     }
 

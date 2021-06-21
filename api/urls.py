@@ -1,37 +1,36 @@
 from django.urls import include, re_path
 from rest_framework.routers import DefaultRouter
-from users.views import ObtainConfirmationCode, TokenObtainView
 
-from api.views import (CategoriesViewSet, CommentsViewSet, ReviewViewSet,
-                       TitleViewSet, UserViewSet, GenreViewSet)
+from api import views
+from users.views import ObtainConfirmationCode, TokenObtainView
 
 router_yamdb_v1 = DefaultRouter()
 router_yamdb_v1.register(
     'users',
-    UserViewSet,
+    views.UserViewSet,
     basename='users')
 router_yamdb_v1.register(
     'titles',
-    TitleViewSet,
+    views.TitleViewSet,
     basename='titles')
 router_yamdb_v1.register(
     r'titles/(?P<title_id>[^/.]+)/reviews',
-    ReviewViewSet,
+    views.ReviewViewSet,
     basename='reviews'
 )
 router_yamdb_v1.register(
     r'titles/(?P<title_id>[^/.]+)/reviews/(?P<review_id>[^/.]+)/comments',
-    CommentsViewSet,
+    views.CommentsViewSet,
     basename='comments'
 )
 router_yamdb_v1.register(
     'categories',
-    CategoriesViewSet,
+    views.CategoriesViewSet,
     basename='categories'
 )
 router_yamdb_v1.register(
     'genres',
-    GenreViewSet,
+    views.GenreViewSet,
     basename='genres'
 )
 

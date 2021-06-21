@@ -1,4 +1,4 @@
-from textwrap import shorten, fill
+from textwrap import fill, shorten
 
 
 def wrap_text(text: str) -> str:

@@ -1,15 +1,15 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from users.models import User
 
 from api.utils import wrap_text
+from users.models import User
 
 
 class Category(models.Model):
     name = models.CharField(
-        verbose_name='Наименование категории',
+        verbose_name='Категория',
         max_length=200,
-        help_text='Введите категорию'
+        help_text='Введите категорию',
     )
     slug = models.SlugField(unique=True)
 
@@ -22,11 +22,13 @@ class Category(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(
-        verbose_name='Наименование жанра',
+        verbose_name='Жанр',
         max_length=200,
         help_text='Введите жанр'
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(
+        unique=True,
+    )
 
     class Meta:
         ordering = ['-id']
@@ -36,13 +38,20 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField('Name', max_length=200, help_text='Введи название')
-    year = models.PositiveSmallIntegerField(
-        'Year',
-        help_text='Год выхода',
-        null=True
+    name = models.CharField(
+        'Название',
+        max_length=200,
+        help_text='Введите название',
     )
-    description = models.TextField('Описание', null=True)
+    year = models.PositiveSmallIntegerField(
+        'Год',
+        help_text='Год выхода',
+        null=True,
+    )
+    description = models.TextField(
+        'Описание',
+        null=True,
+    )
     genre = models.ManyToManyField(Genre, through='GenreTitle')
     category = models.ForeignKey(
         Category,
@@ -75,8 +84,14 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return f'{self.genre} {self.title}'
@@ -88,8 +103,14 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews'
     )
-    text = models.TextField('Текст отзыва', help_text='Введите текст')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(
+        'Текст отзыва',
+        help_text='Введите текст'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
     score = models.PositiveSmallIntegerField(
         'Оценка',
         help_text='Введите от 1 до 10',
@@ -99,10 +120,19 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ['-id']
 
     def __str__(self):
-        return self.text
+        text = wrap_text(self.text)
+        return (
+            f'id: {self.id}\n'
+            f'Author: {self.author.username}\n'
+            f'Date: {self.pub_date}\n'
+            f'Title: {self.title.name}\n'
+            f'Score: {self.score}\n'
+            f'Text: {text}\n'
+            f'\n'
+        )
 
 
 class Comment(models.Model):
@@ -117,3 +147,14 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-pub_date']
+
+    def __str__(self):
+        text = wrap_text(self.text)
+        return (
+            f'id: {self.id}\n'
+            f'Author: {self.author.username}\n'
+            f'Date: {self.pub_date}\n'
+            f'Review: {self.review_id}\n'
+            f'Text: {text}\n'
+            f'\n'
+        )
