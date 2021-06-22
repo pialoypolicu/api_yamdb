@@ -69,9 +69,9 @@ class User(AbstractUser):
 
     def check_confirmation_code(self, raw_confirmation_code):
         def setter(raw_confirmation_code):
-            self.set_password(raw_confirmation_code)
+            self.set_confirmation_code(raw_confirmation_code)
             self._confirmation_code = None
-            self.save(update_fields=['password'])
+            self.save(update_fields=('confirmation_code',))
 
         return check_code(
             raw_confirmation_code,
