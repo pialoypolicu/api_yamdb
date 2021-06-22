@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from users.models import User
+from users.roles import Roles
 
 
 class ReadOnly(permissions.BasePermission):
@@ -22,8 +22,8 @@ class IsOwner(permissions.BasePermission):
 class ObjectPatchDeletePermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         roles_with_permissions = (
-            User.Roles.MODERATOR,
-            User.Roles.ADMIN,
+            Roles.MODERATOR,
+            Roles.ADMIN,
         )
         return (request.user.role in roles_with_permissions
                 or obj.author == request.user)

@@ -6,6 +6,7 @@ from django.contrib.auth.models import UserManager as DefaultUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from users.roles import Roles
 from users.utils import wrap_text
 
 
@@ -32,14 +33,8 @@ class UserManager(DefaultUserManager):
 
 
 class User(AbstractUser):
-    class Roles(models.TextChoices):
-        USER = 'user', 'User'
-        MODERATOR = 'moderator', 'Moderator'
-        ADMIN = 'admin', 'Admin'
-
     email = models.EmailField(_('email address'), unique=True)
     bio = models.TextField(
-        null=True,
         blank=True,
         default='',
     )
@@ -61,7 +56,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ('username',)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
 
     def set_confirmation_code(self, raw_confirmation_code):
         self.confirmation_code = make_confirmation_code(raw_confirmation_code)

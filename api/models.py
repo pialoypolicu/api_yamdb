@@ -14,7 +14,7 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
 
     def __str__(self):
         return self.name
@@ -31,7 +31,7 @@ class Genre(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
 
     def __str__(self):
         return self.name
@@ -63,7 +63,7 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Название'
         verbose_name_plural = 'Названия'
-        ordering = ['-id']
+        ordering = ('-id',)
 
     def __str__(self):
         description = None
@@ -120,7 +120,7 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
 
     def __str__(self):
         text = wrap_text(self.text)
@@ -146,7 +146,7 @@ class Comment(models.Model):
     )
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
 
     def __str__(self):
         text = wrap_text(self.text)

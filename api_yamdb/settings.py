@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -98,6 +97,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
+DEFAULT_FROM_EMAIL = 'service@yamdb.com'
+
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 AUTH_USER_MODEL = 'users.User'
@@ -115,7 +116,3 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=100500),
-}

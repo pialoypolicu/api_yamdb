@@ -1,8 +1,8 @@
 import uuid
 from textwrap import fill, shorten
 
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 def wrap_text(text: str) -> str:
@@ -21,18 +21,15 @@ def get_confirmation_code() -> str:
 
 
 def get_token_for_user(user):
-    refresh = RefreshToken.for_user(user)
-
     return {
-        'token': str(refresh.access_token),
+        'token': default_token_generator.make_token(user),
     }
 
 
 def send_confirmation_code(user, raw_confirmation_code):
     send_mail(
-        'YaMDb confirmation code',
-        f'Your confirmation code: {raw_confirmation_code}',
-        'service@yamdb.com',
+        'YaMDb: Код подтверждения',
+        f'Ваш код подтверждения: {raw_confirmation_code}',
         [user.email],
         fail_silently=False,
     )

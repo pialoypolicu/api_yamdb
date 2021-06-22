@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from users.models import User
+from users.roles import Roles
 
 
 class TokenObtainSerializer(serializers.Serializer):
@@ -28,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request:
             request_user = request.user
-            if (request_user.role != User.Roles.ADMIN
+            if (request_user.role != Roles.ADMIN
                     or not request_user.is_superuser
                     or not request_user.is_staff):
                 validated_data.pop('role', None)

@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from api import constants as _
 from api.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
@@ -10,7 +11,7 @@ class Category(admin.ModelAdmin):
         'name',
         'slug',
     )
-    empty_value_display = '-пусто-'
+    empty_value_display = _.EMPTY_VALUE_MESSAGE
 
 
 @admin.register(Genre)
@@ -19,7 +20,7 @@ class Genre(admin.ModelAdmin):
         'name',
         'slug',
     )
-    empty_value_display = '-пусто-'
+    empty_value_display = _.EMPTY_VALUE_MESSAGE
 
 
 @admin.register(Title)
@@ -40,7 +41,7 @@ class TitleAdmin(admin.ModelAdmin):
     search_fields = (
         'name',
     )
-    empty_value_display = '-пусто-'
+    empty_value_display = _.EMPTY_VALUE_MESSAGE
 
 
 @admin.register(Review)
@@ -59,7 +60,7 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = (
         'text',
     )
-    empty_value_display = '-пусто-'
+    empty_value_display = _.EMPTY_VALUE_MESSAGE
 
 
 @admin.register(Comment)
@@ -78,7 +79,7 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = (
         'text',
     )
-    empty_value_display = '-пусто-'
+    empty_value_display = _.EMPTY_VALUE_MESSAGE
 
 
 @admin.register(User)
@@ -98,4 +99,4 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = (
         'bio',
     )
-    empty_value_display = '-пусто-'
+    empty_value_display = _.EMPTY_VALUE_MESSAGE
