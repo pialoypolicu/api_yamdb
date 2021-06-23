@@ -134,7 +134,10 @@ class Review(models.Model):
         'Оценка',
         help_text='Введите от 1 до 10',
         default=10,
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        validators=[
+            MinValueValidator(1, message='Поставьте оценка от 1 до 10.'),
+            MaxValueValidator(10, message='Поставьте оценка от 1 до 10.')
+        ],
     )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
