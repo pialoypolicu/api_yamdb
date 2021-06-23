@@ -1,17 +1,30 @@
+from datetime import datetime as datetime
+
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+from users.models import User
 
 from api.utils import wrap_text
-from users.models import User
+
+
+def validate_year(value):
+    current_year = datetime.now().date().year
+    if value > current_year:
+        raise ValidationError(
+            _('%(value)s год введен не верно.'),
+            params={'value': value},
+        )
 
 
 class Category(models.Model):
     name = models.CharField(
         verbose_name='Категория',
         max_length=200,
-        help_text='Введите категорию',
+        help_text='Введите категорию', db_index=True
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, db_index=True)
 
     class Meta:
         ordering = ('-id',)
@@ -27,7 +40,7 @@ class Genre(models.Model):
         help_text='Введите жанр'
     )
     slug = models.SlugField(
-        unique=True,
+        unique=True, db_index=True, verbose_name='Жанр'
     )
 
     class Meta:
@@ -47,6 +60,8 @@ class Title(models.Model):
         'Год',
         help_text='Год выхода',
         null=True,
+        db_index=True,
+        validators=[validate_year]
     )
     description = models.TextField(
         'Описание',
@@ -81,6 +96,10 @@ class Title(models.Model):
             f'Genre: {genre}\n'
             f'\n'
         )
+
+    def genres(self):
+        genres = self.genre.values_list('name', flat=True)
+        return ', '.join(genres)
 
 
 class GenreTitle(models.Model):

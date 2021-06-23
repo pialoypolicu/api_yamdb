@@ -1,8 +1,13 @@
 from django.contrib import admin
+from users.models import User
 
 from api import constants as _
-from api.models import Category, Comment, Genre, Review, Title
-from users.models import User
+from api.models import Category, Comment, Genre, GenreTitle, Review, Title
+
+
+class GenreTitleInLine(admin.TabularInline):
+    model = GenreTitle
+    extra = 1
 
 
 @admin.register(Category)
@@ -20,6 +25,7 @@ class Genre(admin.ModelAdmin):
         'name',
         'slug',
     )
+    inlines = (GenreTitleInLine,)
     empty_value_display = _.EMPTY_VALUE_MESSAGE
 
 
@@ -28,10 +34,11 @@ class TitleAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'category',
-        'genre',
+        'genres',
         'year',
         'description',
     )
+    inlines = (GenreTitleInLine,)
     list_filter = (
         'category',
         'genre',
