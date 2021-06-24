@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from api import constants as _
-from api.models import Category, Comment, Genre, Review, Title
+from api.models import Category, Comment, Genre, Review, Title, GenreTitle
 from users.models import User
 
 
@@ -23,15 +23,21 @@ class Genre(admin.ModelAdmin):
     empty_value_display = _.EMPTY_VALUE_MESSAGE
 
 
+class GenreInline(admin.TabularInline):
+    model = GenreTitle
+    extra = 1
+
+
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'category',
-        'genre',
         'year',
         'description',
+        'get_genres',
     )
+    inlines = (GenreInline,)
     list_filter = (
         'category',
         'genre',
@@ -42,6 +48,12 @@ class TitleAdmin(admin.ModelAdmin):
         'name',
     )
     empty_value_display = _.EMPTY_VALUE_MESSAGE
+
+    def get_genres(self, obj):
+        genres = obj.genre.values_list('name', flat=True)
+        return ', '.join(genres)
+
+    get_genres.short_description = 'Жанр'
 
 
 @admin.register(Review)
