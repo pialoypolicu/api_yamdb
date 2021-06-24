@@ -15,14 +15,13 @@ class TokenObtainView(APIView):
 
     def post(self, request, **kwargs):
         serializer = serializers.TokenObtainSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             user = get_object_or_404(User, email=serializer.data['email'])
             if user.check_confirmation_code(
                     serializer.data['confirmation_code']
             ):
                 token = get_token_for_user(user)
                 return Response(token)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ObtainConfirmationCode(APIView):
@@ -32,7 +31,7 @@ class ObtainConfirmationCode(APIView):
         serializer = serializers.EmailSerializer(
             data=request.data
         )
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             user, created = User.objects.get_or_create(
                 email=serializer.data['email']
             )
@@ -45,4 +44,3 @@ class ObtainConfirmationCode(APIView):
                 )
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

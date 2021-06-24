@@ -1,8 +1,8 @@
 from django.contrib import admin
-from users.models import User
 
 from api import constants as _
 from api.models import Category, Comment, Genre, GenreTitle, Review, Title
+from users.models import User
 
 
 class GenreTitleInLine(admin.TabularInline):
