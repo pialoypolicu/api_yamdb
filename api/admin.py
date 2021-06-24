@@ -34,9 +34,9 @@ class TitleAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'category',
-        'genres',
         'year',
         'description',
+        'get_genres',
     )
     inlines = (GenreTitleInLine,)
     list_filter = (
@@ -49,6 +49,12 @@ class TitleAdmin(admin.ModelAdmin):
         'name',
     )
     empty_value_display = _.EMPTY_VALUE_MESSAGE
+
+    def get_genres(self, obj):
+        genres = obj.genre.values_list('name', flat=True)
+        return ', '.join(genres)
+
+    get_genres.short_description = 'Жанр'
 
 
 @admin.register(Review)
