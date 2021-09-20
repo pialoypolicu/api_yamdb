@@ -7,7 +7,7 @@ Python 3.9.4, Django 3.1+, Django REST Framework, SQLite3, Simple JWT, Django Fi
 ### Установка
 Создайте виртуальное окружение:
 
-`python -m venv venv`
+`python3 -m venv venv`
 
 Активация виртуального окружения:
 
